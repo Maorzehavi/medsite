@@ -7,7 +7,7 @@ import { UserModel } from "../../Models/UserModel";
 import appConfig from "../../utils/config";
 import { AppDispatch } from "../store";
 
-const url = appConfig.apiBaseUrl + "/users";
+const url = appConfig.apiBaseUrl + "users";
 
 const fetchUsers = createAsyncThunk("users/fetch", async ():Promise<UserModel[]> => {
   const response = await axios.get<UserModel[]>(url);

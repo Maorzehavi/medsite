@@ -1,11 +1,8 @@
-import { AsyncThunk, ThunkDispatch } from "@reduxjs/toolkit";
-import { type } from "os";
-import { useEffect, useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, } from "react";
+import {  useSelector } from "react-redux";
 import {
   RootState,
   useFetchUsersThunk,
-  useDeleteUserThunk,
   useAddUsersThunk,
 } from "../store/store";
 import UserItem from "./UserItem";
@@ -45,7 +42,7 @@ function UsersList() {
   }
 
   return (
-    <div className="">
+    <div className="container mt-2">
       <div className="flex flex-row justify-between m-3">
         <h3 className="m-2 text-xl">Users </h3>
 

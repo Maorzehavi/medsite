@@ -1,32 +1,41 @@
 import { UserModel } from "../Models/UserModel";
 import { useDeleteUserThunk } from "../store/store";
 import ExpandablePanel from "./ExpandablePanel";
+import { AiOutlineUserDelete } from "react-icons/ai";
+import AlbumList from "./AlbumList";
 
 interface UserItemProps {
   user: UserModel;
 }
 function UserItem(props: UserItemProps) {
-  const [runDeleteUser, isDeletingUser, deletingUserError] =
-    useDeleteUserThunk();
+  const [runDeleteUser, isDeletingUser] = useDeleteUserThunk();
 
   const header = (
     <>
-      <div className="flex items-center justify-between">
-        <>{props.user.name}</>
-
+      <div className="flex justify-between p-2">
         <button
+          onClick={() => runDeleteUser(props.user)}
           disabled={isDeletingUser}
-          onClick={() => {
-            runDeleteUser(props.user);
-          }}
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          className="my-auto"
+          title="Delete User"
         >
-          Delete
+          <AiOutlineUserDelete />
         </button>
+
+        <div className="flex my-auto ml-5">
+          <span className="text-gray-500 ml-1">{props.user.name}</span>
+        </div>
       </div>
     </>
   );
-  return <ExpandablePanel header={header} />;
+
+  const children = (
+    <>
+      <AlbumList user={props.user} />
+    </>
+  );
+
+  return <ExpandablePanel header={header} children={children} />;
 }
 
 export default UserItem;
