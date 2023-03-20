@@ -1,24 +1,39 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { UserModel } from "../../Models/UserModel";
-import appConfig from "../../utils/config";
 
-const userApi = createApi({
-  reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: appConfig.apiBaseUrl }),
-  tagTypes: ["User"],
+import { UserModel } from "../../Models/UserModel";
+import notificationService from "../../services/NotificationService";
+import rootApi from "./rootApi";
+
+const userApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchUsers: builder.query<UserModel[], void>({
-      providesTags: ["User"],
       query: () => {
         return {
           url: "users",
           method: "GET",
         };
       },
+      async onQueryStarted(args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userApi.util.updateQueryData(
+              "fetchUsers",
+              undefined,
+              (users: UserModel[]) => {
+                users?.push(...result.data);
+              }
+            )
+          );
+          
+        } catch (error) {
+            console.log(error);
+          
+        }
+      }
+      
     }),
 
     addUser: builder.mutation<UserModel, UserModel>({
-      invalidatesTags: ["User"],
       query: (user: UserModel) => {
         return {
           url: "users",
@@ -26,9 +41,53 @@ const userApi = createApi({
           body: user,
         };
       },
+      async onQueryStarted(args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userApi.util.updateQueryData(
+              "fetchUsers",
+              undefined,
+              (users: UserModel[]) => {
+                users?.push(result.data);
+              }
+            )
+          );
+        } catch (error) {
+            console.log(error);
+            
+        }
+      },
+    }),
+    deleteUser: builder.mutation<void, UserModel>({
+      query: (user: UserModel) => {
+        return {
+          url: `users/${user.id}`,
+          method: "DELETE",
+        };
+      },
+      async onQueryStarted(args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userApi.util.updateQueryData(
+              "fetchUsers",
+              undefined,
+              (users: UserModel[]) => {
+                users?.splice(users.findIndex((u) => u.id === args.id), 1);
+              }
+            )
+          );
+        } catch (error) {
+            notificationService.error(error);
+        }
+      },
+    
     }),
   }),
 });
 
-export const { useFetchUsersQuery, useAddUserMutation } = userApi;
+
+export const { useFetchUsersQuery, useAddUserMutation, useDeleteUserMutation } =
+  userApi;
 export { userApi };

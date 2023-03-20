@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+// import { useSelector } from "react-redux";
 import { AlbumModel } from "../Models/AlbumModel";
 import { UserModel } from "../Models/UserModel";
 import notificationService from "../services/NotificationService";
@@ -9,9 +10,12 @@ interface AlbumListProps {
   user: UserModel;
 }
 function AlbumList(props: AlbumListProps) {
-  const { data, isLoading, error } = useFetchAlbumsQuery(props.user);
+  const { data, isLoading, error } = useFetchAlbumsQuery(props.user.id!);
   const [addAlbum, results] = useAddAlbumMutation();
   
+  
+  // const albums: AlbumModel[] = useSelector((state: any) => state.albums.albums);
+
   const randomAlbum = (user: UserModel): AlbumModel => {
     return {
       title: faker.commerce.productName(),
@@ -40,17 +44,22 @@ function AlbumList(props: AlbumListProps) {
 
   return (
     <div>
-      Albums for {props.user.name}
-        <button onClick={addAlbumHandler}>Add Album</button>
+      <div className="flex justify-between">
+      <span className=" text-2xl ml-3 ">Albums for {props.user.name}</span>
+        <button onClick={addAlbumHandler} className = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-auto mr-2" title="Add Album"
+        >Add Album</button>
+      </div>
       {isLoading && <div>Loading...</div>}
       {data &&
         data.map((album) => {
           return (
-            <ExpandablePanel
-              key={album.id}
+            <div className="m-2" key={album.id}>
+                <ExpandablePanel
+            //   key={album.id}
               header={header(album)}
               children={children}
             />
+            </div>
           );
         })}
     </div>
