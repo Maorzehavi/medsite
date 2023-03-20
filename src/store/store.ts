@@ -13,5 +13,6 @@ export const store = configureStore({
 setupListeners(store.dispatch);
 
 export {useFetchAlbumsQuery,useAddAlbumMutation} from './apis/albumApi';
+export {useFetchUsersQuery,useAddUserMutation,useDeleteUserMutation, useUpdateUserMutation} from './apis/userApi';
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

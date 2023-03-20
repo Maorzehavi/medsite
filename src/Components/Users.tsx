@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { UserModel } from "../Models/UserModel";
 import notificationService from "../services/NotificationService";
-import { useAddUserMutation, useFetchUsersQuery } from "../store/apis/userApi";
+import { useAddUserMutation, useFetchUsersQuery } from "../store/store";
 import UserCard from "./UserCard";
 
 function Users() {

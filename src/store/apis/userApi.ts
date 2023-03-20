@@ -68,7 +68,7 @@ const userApi = rootApi.injectEndpoints({
       },
       async onQueryStarted(args, { queryFulfilled, dispatch }) {
         try {
-          const result = await queryFulfilled;
+          await queryFulfilled;
           dispatch(
             userApi.util.updateQueryData(
               "fetchUsers",
@@ -84,10 +84,37 @@ const userApi = rootApi.injectEndpoints({
       },
     
     }),
+    updateUser: builder.mutation<UserModel, UserModel>({
+      query: (user: UserModel) => {
+        return {
+          url: `users/${user.id}`,
+          method: "PUT",
+          body: user,
+        };
+      },
+      async onQueryStarted(args, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userApi.util.updateQueryData(
+              "fetchUsers",
+              undefined,
+              (users: UserModel[]) => {
+                const index = users.findIndex((u) => u.id === args.id);
+                users?.splice(index, 1, result.data);
+              }
+            )
+          );
+        } catch (error) {
+            notificationService.error(error);
+        }
+      },
+      
+    }),
   }),
 });
 
 
-export const { useFetchUsersQuery, useAddUserMutation, useDeleteUserMutation } =
+export const { useFetchUsersQuery, useAddUserMutation, useDeleteUserMutation ,useUpdateUserMutation} =
   userApi;
 export { userApi };
